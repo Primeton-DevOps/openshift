@@ -36,7 +36,7 @@ public class ServiceQueryApiTestCase {
 					.append(service.getPorts()).append(", ")
 					.append(service.getPods()).append(", ")
 					.toString());
-			System.err.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+			System.out.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
 		}
 	}
 
