@@ -1,0 +1,18 @@
+{
+	"kind": "Route",
+	"apiVersion": "v1",
+	"metadata": {
+		"name": "myservice-20161103165211-route",
+		"labels": {
+			"app": "jenkins-ephemeral",
+			"template": "jenkins-ephemeral-template"
+		}
+	},
+	"spec": {
+		"to": {
+			"kind": "Service",
+			"name": "myservice-20161103165211"
+		},
+		"host": "myjenkins.openshift.primeton.com"
+	}
+}
