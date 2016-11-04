@@ -25,7 +25,9 @@ import com.openshift.restclient.model.route.IRoute;
 import com.primeton.devops.openshift.util.OpenshiftClient;
 
 /**
- * Reference src/test/service.json
+ * Reference: 
+ * src/test/resources/service.json
+ * src/test/resources/route.json
  * 
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
  *
@@ -50,8 +52,9 @@ public class ServiceManageApiTestCase {
 	
 	@Test
 	public void test() throws Exception {
-		// Create pod with 2 container
+		// Create pod with a container
 		IPod pod = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.POD, POD_NAME, PROJECT_NAME);
+		// Creating a pod directly without a resource controller (RC)
 		IContainer container = pod.addContainer(POD_NAME + "-1");
 		container.setImage(new DockerImageURI("nginx:latest"));
 		pod.addLabel("name", POD_NAME);
