@@ -111,4 +111,5 @@ public class ServiceManageApiTestCase {
 		OpenshiftClient.getClient().delete(project);
 		System.out.println("Project '" + PROJECT_NAME + "' success deleted.");
 	}
+	
 }
