@@ -17,11 +17,11 @@ import com.openshift.restclient.model.route.IRoute;
 import com.primeton.devops.openshift.testcase.AbstractTestCase;
 
 /**
- * <a href="http://kubernetes.io/docs/admin/resourcequota/">Resource Quota</a>
+ * <a href="http://kubernetes.io/docs/admin/resourcequota/">Kubernetes Resource Quota</a>
  * <br/>
- * <a href="https://docs.openshift.com/enterprise/3.1/dev_guide/quota.html">OpenShift Quota</a>
+ * <a href="https://docs.openshift.com/enterprise/3.1/dev_guide/quota.html">OpenShift Resource Quota</a>
  * <br/>
- * <a href="https://docs.openshift.com/enterprise/3.2/dev_guide/compute_resources.html">Compute Resource</a>
+ * <a href="https://docs.openshift.com/enterprise/3.2/dev_guide/compute_resources.html">OpenShift Compute Resource</a>
  * 
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
  *
@@ -68,7 +68,7 @@ public class QuotaApiTestCase extends AbstractTestCase {
 		service.addPort(80, 80); // port : targetPort (container)
 		service = getOsClient().create(service);
 		Assert.assertNotNull(service);
-		System.out.println(String.format("Create service %s success.", service));
+		System.out.println(String.format("Create service %s success.", service)); //$NON-NLS-1$
 		
 		// create route
 		IRoute route = getOsClient().getResourceFactory().stub(ResourceKind.ROUTE, routeName, projectName);
@@ -77,7 +77,7 @@ public class QuotaApiTestCase extends AbstractTestCase {
 		route.setServiceName(serviceName); // binding target service
 		route = getOsClient().create(route);
 		Assert.assertNotNull(route);
-		System.out.println(String.format("Create route %s for service '%s' success.", route, serviceName));
+		System.out.println(String.format("Create route %s for service '%s' success.", route, serviceName)); //$NON-NLS-1$
 		
 		//
 		// Resource Quota 
@@ -85,7 +85,7 @@ public class QuotaApiTestCase extends AbstractTestCase {
 		
 		// ResourceQuota resourceQuota = getOsClient().getResourceFactory()
 		//	.stub(ResourceKind.RESOURCE_QUOTA, resourceQuotaName, projectName);
-		InputStream in = QuotaApiTestCase.class.getResourceAsStream("/quota.json");
+		InputStream in = QuotaApiTestCase.class.getResourceAsStream("/quota.json"); //$NON-NLS-1$
 		IResourceQuota resourceQuota = getOsClient().getResourceFactory().create(in);
 		
 		IResourceQuota quota = getOsClient().create(resourceQuota, projectName);
