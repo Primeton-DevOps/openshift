@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.model.IProject;
@@ -19,7 +20,7 @@ import com.primeton.devops.openshift.util.OpenshiftClient;
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
  *
  */
-public class AbstractTestCase {
+public abstract class AbstractTestCase {
 	
 	final protected String uid = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 	final protected String projectName = "project-" + uid;
@@ -38,6 +39,9 @@ public class AbstractTestCase {
 		OpenshiftClient.getClient().delete(project);
 		System.out.println("Project '" + projectName + "' success deleted.");
 	}
+	
+	@Test
+	public abstract void test();
 	
 	protected void sleep(int senconds) {
 		try {

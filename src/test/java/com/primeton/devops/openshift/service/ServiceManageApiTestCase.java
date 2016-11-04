@@ -66,8 +66,10 @@ public class ServiceManageApiTestCase {
 		IService service = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.SERVICE, SERVICE_NAME, PROJECT_NAME);
 		
 		Map<String, String> labelSelectors = new HashMap<>();
-		labelSelectors.put("name", POD_NAME); // match line 57
+		labelSelectors.put("name", POD_NAME); // match line 60
 		service.setSelector(labelSelectors);
+		// or easy set
+		// service.setSelector("name", POD_NAME);
 		
 		service.addPort(80, 80); // port : targetPort (container)
 		

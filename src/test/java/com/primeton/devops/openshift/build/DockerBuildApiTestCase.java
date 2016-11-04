@@ -50,6 +50,7 @@ public class DockerBuildApiTestCase {
 						.inNamespace(PROJECT_NAME)
 						.fromGitSource()
 						.fromGitUrl("https://github.com/Official-Registry/redis.git")
+						// .inContextDir("docker/redis") // if Dockerfile not in root directory
 						.usingGitReference("master")
 						.end()
 						.usingSourceStrategy()
