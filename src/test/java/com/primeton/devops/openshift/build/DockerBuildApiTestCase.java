@@ -53,7 +53,7 @@ public class DockerBuildApiTestCase {
 						.usingGitReference("master")
 						.end()
 						.usingSourceStrategy()
-						.fromDockerImage("redis:3.2.5")
+						.fromDockerImage("redis:3.2.5") // ? Dockerfile
 						.end()
 						.buildOnSourceChange(true)
 						.buildOnConfigChange(true)
