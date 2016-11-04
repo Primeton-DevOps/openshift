@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.openshift.restclient.IClient;
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.model.IProject;
 import com.openshift.restclient.model.IResource;
@@ -29,14 +30,14 @@ public abstract class AbstractTestCase {
 	
 	@Before
 	public void init() {
-		IResource request = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.PROJECT_REQUEST, projectName);
-		project = (IProject)OpenshiftClient.getClient().create(request);
+		IResource request = getOsClient().getResourceFactory().stub(ResourceKind.PROJECT_REQUEST, projectName);
+		project = (IProject)getOsClient().create(request);
 		System.out.println("Project '" + projectName + "' success created.");
 	}
 	
 	@After
 	public void clean() {
-		OpenshiftClient.getClient().delete(project);
+		getOsClient().delete(project);
 		System.out.println("Project '" + projectName + "' success deleted.");
 	}
 	
@@ -49,6 +50,10 @@ public abstract class AbstractTestCase {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected IClient getOsClient() {
+		return OpenshiftClient.getClient();
 	}
 
 }
