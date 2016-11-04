@@ -3,9 +3,10 @@
  */
 package com.primeton.devops.openshift.resource;
 
+import java.io.InputStream;
+
 import org.junit.Assert;
 
-import com.openshift.internal.restclient.model.ResourceQuota;
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.images.DockerImageURI;
 import com.openshift.restclient.model.IContainer;
@@ -14,10 +15,13 @@ import com.openshift.restclient.model.IResourceQuota;
 import com.openshift.restclient.model.IService;
 import com.openshift.restclient.model.route.IRoute;
 import com.primeton.devops.openshift.testcase.AbstractTestCase;
-import com.primeton.devops.openshift.util.OpenshiftClient;
 
 /**
  * <a href="http://kubernetes.io/docs/admin/resourcequota/">Resource Quota</a>
+ * <br/>
+ * <a href="https://docs.openshift.com/enterprise/3.1/dev_guide/quota.html">OpenShift Quota</a>
+ * <br/>
+ * <a href="https://docs.openshift.com/enterprise/3.2/dev_guide/compute_resources.html">Compute Resource</a>
  * 
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
  *
@@ -38,7 +42,7 @@ public class QuotaApiTestCase extends AbstractTestCase {
 	 */
 	@Override
 	public void test() {
-		IDeploymentConfig deploymentConfig = OpenshiftClient.getClient().getResourceFactory()
+		IDeploymentConfig deploymentConfig = getOsClient().getResourceFactory()
 				.stub(ResourceKind.DEPLOYMENT_CONFIG, deploymentConfigName, projectName);
 		IContainer container = deploymentConfig.addContainer(containerName);
 		container.setImage(new DockerImageURI("nginx:latest"));
@@ -53,25 +57,25 @@ public class QuotaApiTestCase extends AbstractTestCase {
 		deploymentConfig.setReplicaSelector("name", labelName);
 		
 		// create pod
-		IDeploymentConfig dc = OpenshiftClient.getClient().create(deploymentConfig);
+		IDeploymentConfig dc = getOsClient().create(deploymentConfig);
 		Assert.assertNotNull(dc);
 		
 		System.out.println("DeploymentConfig '" + deploymentConfigName + "' success created. Will delete after 600 seconds.");
 		
 		// create service
-		IService service = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.SERVICE, serviceName, projectName);
+		IService service = getOsClient().getResourceFactory().stub(ResourceKind.SERVICE, serviceName, projectName);
 		service.setSelector("name", labelName); // bind target pod
 		service.addPort(80, 80); // port : targetPort (container)
-		service = OpenshiftClient.getClient().create(service);
+		service = getOsClient().create(service);
 		Assert.assertNotNull(service);
 		System.out.println(String.format("Create service %s success.", service));
 		
 		// create route
-		IRoute route = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.ROUTE, routeName, projectName);
+		IRoute route = getOsClient().getResourceFactory().stub(ResourceKind.ROUTE, routeName, projectName);
 		route.setHost(domainName);
 		// route.setPath("/");
 		route.setServiceName(serviceName); // binding target service
-		route = OpenshiftClient.getClient().create(route);
+		route = getOsClient().create(route);
 		Assert.assertNotNull(route);
 		System.out.println(String.format("Create route %s for service '%s' success.", route, serviceName));
 		
@@ -79,29 +83,12 @@ public class QuotaApiTestCase extends AbstractTestCase {
 		// Resource Quota 
 		//
 		
-		ResourceQuota resourceQuota = OpenshiftClient.getClient().getResourceFactory()
-				.stub(ResourceKind.RESOURCE_QUOTA, resourceQuotaName, projectName);
+		// ResourceQuota resourceQuota = getOsClient().getResourceFactory()
+		//	.stub(ResourceKind.RESOURCE_QUOTA, resourceQuotaName, projectName);
+		InputStream in = QuotaApiTestCase.class.getResourceAsStream("/quota.json");
+		IResourceQuota resourceQuota = getOsClient().getResourceFactory().create(in);
 		
-//		resourceQuota.addLabel("spec.hard.cpu", "10000");
-//		resourceQuota.addLabel("spec.hard.limits.cpu", "10000");
-//		resourceQuota.addLabel("spec.hard.limits.memory", "1024Gi");
-//		resourceQuota.addLabel("spec.hard.memory", "1024Gi");
-//		resourceQuota.addLabel("spec.hard.request.cpu", "1");
-//		resourceQuota.addLabel("spec.hard.request.memory", "1Gi");
-//		resourceQuota.addLabel("spec.hard.reuest.storage", "4096G");
-//		resourceQuota.addLabel("spec.hard.pods", "100");
-
-		
-		resourceQuota.setAnnotation("cpu", "10000");
-		resourceQuota.setAnnotation("limits.cpu", "10000");
-		resourceQuota.setAnnotation("limits.memory", "1024Gi");
-		resourceQuota.setAnnotation("memory", "1024Gi");
-		resourceQuota.setAnnotation("request.cpu", "1");
-		resourceQuota.setAnnotation("request.memory", "1Gi");
-		resourceQuota.setAnnotation("reuest.storage", "4096G");
-		resourceQuota.setAnnotation("pods", "100");
-		
-		IResourceQuota quota = OpenshiftClient.getClient().create(resourceQuota);
+		IResourceQuota quota = getOsClient().create(resourceQuota, projectName);
 		Assert.assertNotNull(quota);
 		
 		System.out.println(String.format("Resource Quota '%s' success created, will delete after 600s.", resourceQuotaName));
@@ -109,10 +96,10 @@ public class QuotaApiTestCase extends AbstractTestCase {
 		sleep(600);
 		
 		// clean
-		OpenshiftClient.getClient().delete(route);
-		OpenshiftClient.getClient().delete(service);
-		OpenshiftClient.getClient().delete(dc);
-		OpenshiftClient.getClient().delete(quota);
+		getOsClient().delete(route);
+		getOsClient().delete(service);
+		getOsClient().delete(dc);
+		getOsClient().delete(quota);
 	}
 
 }
