@@ -50,7 +50,7 @@ public class ServiceManageApiTestCase {
 	
 	@Test
 	public void test() throws Exception {
-		// Create pod
+		// Create pod with 2 container
 		IPod pod = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.POD, POD_NAME, PROJECT_NAME);
 		IContainer container = pod.addContainer(POD_NAME + "-1");
 		container.setImage(new DockerImageURI("nginx:latest"));
@@ -66,14 +66,8 @@ public class ServiceManageApiTestCase {
 		labelSelectors.put("name", POD_NAME); // match line 57
 		service.setSelector(labelSelectors);
 		
-		service.addPort(80, 80);
-		/*
-		service.addLabel("app", "jenkins-ephemeral");
-		service.addLabel("template", "jenkins-ephemeral-template");
+		service.addPort(80, 80); // port : targetPort (container)
 		
-		service.setAnnotation("service.alpha.openshift.io/dependencies", "[{\"name\": \"jenkins-jnlp\", \"namespace\": \"" + PROJECT_NAME + "\", \"kind\": \"Service\"}]");
-		service.setAnnotation("service.openshift.io/infrastructure", "true");
-		*/
 		service = OpenshiftClient.getClient().create(service);
 		
 		Assert.assertNotNull(service);
@@ -90,7 +84,7 @@ public class ServiceManageApiTestCase {
 				.append(service.getPods()).append(", ")
 				.toString());
 		
-		System.out.println("Service '" + SERVICE_NAME + "' success created. Will delete after 300 seconds.");
+		System.out.println("Service '" + SERVICE_NAME + "' success created. Will delete after 600 seconds.");
 		 
 		// Create route for service
 		IRoute route = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.ROUTE, ROUTE_NAME, PROJECT_NAME);
@@ -100,8 +94,10 @@ public class ServiceManageApiTestCase {
 		route.setServiceName(SERVICE_NAME); // binding target service
 		route = OpenshiftClient.getClient().create(route, PROJECT_NAME);
 		
-		TimeUnit.SECONDS.sleep(300);
+		TimeUnit.SECONDS.sleep(600);
 		
+		// clean resource
+		OpenshiftClient.getClient().delete(pod);
 		OpenshiftClient.getClient().delete(route);
 		OpenshiftClient.getClient().delete(service);
 		System.out.println("Service '" + SERVICE_NAME + " success deleted.");
