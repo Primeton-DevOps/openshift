@@ -22,6 +22,8 @@ import com.primeton.devops.openshift.testcase.AbstractTestCase;
  * <a href="https://docs.openshift.com/enterprise/3.1/dev_guide/quota.html">OpenShift Resource Quota</a>
  * <br/>
  * <a href="https://docs.openshift.com/enterprise/3.2/dev_guide/compute_resources.html">OpenShift Compute Resource</a>
+ * <br/>
+ * <a href="https://docs.openshift.com/container-platform/3.3/dev_guide/compute_resources.html">OpenShift Compute Resource</a>
  * 
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
  *
