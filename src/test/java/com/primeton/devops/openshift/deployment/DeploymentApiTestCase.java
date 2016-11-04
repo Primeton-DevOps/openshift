@@ -34,10 +34,6 @@ public class DeploymentApiTestCase extends AbstractTestCase {
 	public void test() {
 		IDeploymentConfig deploymentConfig = OpenshiftClient.getClient().getResourceFactory()
 				.stub(ResourceKind.DEPLOYMENT_CONFIG, deploymentConfigName, projectName);
-		
-		// deploymentConfig.setEnvironmentVariable("MEM_MAX", "2048");
-		// deploymentConfig.setEnvironmentVariable("MEM_MIN", "1024");
-		
 		IContainer container = deploymentConfig.addContainer(containerName);
 		container.setImage(new DockerImageURI("nginx:latest"));
 		container.addEnvVar("MEM_MAX", "2048");
