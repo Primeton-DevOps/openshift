@@ -17,8 +17,7 @@ import com.primeton.devops.openshift.testcase.AbstractTestCase;
 public class DockerBuildApiTestCase extends AbstractTestCase {
 	
 	private String buildName = "mybuild-" + uid;
-	private String projectName = "myproject-" + uid;
-	private String IMAGE_TAG = "myimage:" + uid;
+	private String imageTag = "myimage:" + uid;
 	
 	@Test
 	public void test() {
@@ -40,7 +39,7 @@ public class DockerBuildApiTestCase extends AbstractTestCase {
 						.buildOnSourceChange(true)
 						.buildOnConfigChange(true)
 						.buildOnImageChange(true)
-						.toImageStreamTag(IMAGE_TAG)
+						.toImageStreamTag(imageTag)
 						.build();
 			}
 		}, null);
