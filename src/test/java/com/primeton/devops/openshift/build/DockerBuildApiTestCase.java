@@ -3,51 +3,32 @@
  */
 package com.primeton.devops.openshift.build;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.capability.CapabilityVisitor;
 import com.openshift.restclient.model.IBuildConfig;
-import com.openshift.restclient.model.IProject;
-import com.openshift.restclient.model.IResource;
 import com.openshift.restclient.model.build.IBuildConfigBuilder;
-import com.primeton.devops.openshift.util.OpenshiftClient;
+import com.primeton.devops.openshift.testcase.AbstractTestCase;
 
 /**
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
  *
  */
-public class DockerBuildApiTestCase {
+public class DockerBuildApiTestCase extends AbstractTestCase {
 	
-	private static final String UID = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-	private static final String BUILD_NAME = "mybuild-" + UID;
-	private static final String PROJECT_NAME = "myproject-" + UID;
-	private static final String IMAGE_TAG = "myimage:" + UID;
-	
-	private IProject project;
-	
-	@Before
-	public void init() {
-		IResource request = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.PROJECT_REQUEST, PROJECT_NAME);
-		project = (IProject)OpenshiftClient.getClient().create(request);
-		System.out.println("Project '" + PROJECT_NAME + "' success created.");
-	}
+	private String buildName = "mybuild-" + uid;
+	private String projectName = "myproject-" + uid;
+	private String IMAGE_TAG = "myimage:" + uid;
 	
 	@Test
-	public void test() throws Exception {
-		IBuildConfig buildConfig = OpenshiftClient.getClient().accept(new CapabilityVisitor<IBuildConfigBuilder, IBuildConfig>() {
+	public void test() {
+		IBuildConfig buildConfig = getOsClient().accept(new CapabilityVisitor<IBuildConfigBuilder, IBuildConfig>() {
 
 			@Override
 			public IBuildConfig visit(IBuildConfigBuilder capability) {
 				return capability
-						.named(BUILD_NAME)
-						.inNamespace(PROJECT_NAME)
+						.named(buildName)
+						.inNamespace(projectName)
 						.fromGitSource()
 						.fromGitUrl("https://github.com/Official-Registry/redis.git")
 						// .inContextDir("docker/redis") // if Dockerfile not in root directory
@@ -65,19 +46,13 @@ public class DockerBuildApiTestCase {
 		}, null);
 		
 		// Create build
-		buildConfig = OpenshiftClient.getClient().create(buildConfig, PROJECT_NAME);
+		buildConfig = getOsClient().create(buildConfig, projectName);
 		
 		System.out.println("Docker build configuration success created. Will delete after 600 seconds.");
-		TimeUnit.SECONDS.sleep(600);
+		sleep(600);
 		
-		OpenshiftClient.getClient().delete(buildConfig);
+		getOsClient().delete(buildConfig);
 		System.out.println("Docker build configuration success deleted.");
-	}
-
-	@After
-	public void clean() {
-		OpenshiftClient.getClient().delete(project);
-		System.out.println("Project '" + PROJECT_NAME + "' success deleted.");
 	}
 
 }

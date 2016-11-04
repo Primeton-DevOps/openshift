@@ -3,26 +3,19 @@
  */
 package com.primeton.devops.openshift.service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.images.DockerImageURI;
 import com.openshift.restclient.model.IContainer;
 import com.openshift.restclient.model.IPod;
-import com.openshift.restclient.model.IProject;
-import com.openshift.restclient.model.IResource;
 import com.openshift.restclient.model.IService;
 import com.openshift.restclient.model.route.IRoute;
-import com.primeton.devops.openshift.util.OpenshiftClient;
+import com.primeton.devops.openshift.testcase.AbstractTestCase;
 
 /**
  * Reference: 
@@ -32,48 +25,37 @@ import com.primeton.devops.openshift.util.OpenshiftClient;
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
  *
  */
-public class ServiceManageApiTestCase {
+public class ServiceManageApiTestCase extends AbstractTestCase {
 	
-	private static final String UID = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-	private static final String PROJECT_NAME = "myproject-" + UID;
-	private static final String SERVICE_NAME = "myservice-" + UID;
-	private static final String POD_NAME = "mypod-" + UID;
-	private static final String ROUTE_NAME = SERVICE_NAME + "-route";
-	private static final String DOMAIN_NAME = SERVICE_NAME + ".openshift.primeton.com";
-	
-	private IProject project;
-	
-	@Before
-	public void init() {
-		IResource request = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.PROJECT_REQUEST, PROJECT_NAME);
-		project = (IProject)OpenshiftClient.getClient().create(request);
-		System.out.println("Project '" + PROJECT_NAME + "' success created.");
-	}
+	private String serviceName = "myservice-" + uid;
+	private String podName = "mypod-" + uid;
+	private String routeName = serviceName + "-route";
+	private String domainName = serviceName + ".openshift.primeton.com";
 	
 	@Test
-	public void test() throws Exception {
+	public void test() {
 		// Create pod with a container
-		IPod pod = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.POD, POD_NAME, PROJECT_NAME);
+		IPod pod = getOsClient().getResourceFactory().stub(ResourceKind.POD, podName, projectName);
 		// Creating a pod directly without a resource controller (RC)
-		IContainer container = pod.addContainer(POD_NAME + "-1");
+		IContainer container = pod.addContainer(podName + "-1");
 		container.setImage(new DockerImageURI("nginx:latest"));
-		pod.addLabel("name", POD_NAME);
+		pod.addLabel("name", podName);
 		
-		pod = OpenshiftClient.getClient().create(pod);
+		pod = getOsClient().create(pod);
 		Assert.assertNotNull(pod);
 		
 		// Create service
-		IService service = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.SERVICE, SERVICE_NAME, PROJECT_NAME);
+		IService service = getOsClient().getResourceFactory().stub(ResourceKind.SERVICE, serviceName, projectName);
 		
 		Map<String, String> labelSelectors = new HashMap<>();
-		labelSelectors.put("name", POD_NAME); // match line 60
+		labelSelectors.put("name", podName); // match line 60
 		service.setSelector(labelSelectors);
 		// or easy set
 		// service.setSelector("name", POD_NAME);
 		
 		service.addPort(80, 80); // port : targetPort (container)
 		
-		service = OpenshiftClient.getClient().create(service);
+		service = getOsClient().create(service);
 		
 		Assert.assertNotNull(service);
 		
@@ -89,29 +71,23 @@ public class ServiceManageApiTestCase {
 				.append(service.getPods()).append(", ")
 				.toString());
 		
-		System.out.println("Service '" + SERVICE_NAME + "' success created. Will delete after 600 seconds.");
+		System.out.println("Service '" + serviceName + "' success created. Will delete after 600 seconds.");
 		 
 		// Create route for service
-		IRoute route = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.ROUTE, ROUTE_NAME, PROJECT_NAME);
+		IRoute route = getOsClient().getResourceFactory().stub(ResourceKind.ROUTE, routeName, projectName);
 		
-		route.setHost(DOMAIN_NAME);
+		route.setHost(domainName);
 		// route.setPath("/");
-		route.setServiceName(SERVICE_NAME); // binding target service
-		route = OpenshiftClient.getClient().create(route, PROJECT_NAME);
+		route.setServiceName(serviceName); // binding target service
+		route = getOsClient().create(route, projectName);
 		
-		TimeUnit.SECONDS.sleep(600);
+		sleep(600);
 		
 		// clean resource
-		OpenshiftClient.getClient().delete(pod);
-		OpenshiftClient.getClient().delete(route);
-		OpenshiftClient.getClient().delete(service);
-		System.out.println("Service '" + SERVICE_NAME + " success deleted.");
-	}
-
-	@After
-	public void clean() {
-		OpenshiftClient.getClient().delete(project);
-		System.out.println("Project '" + PROJECT_NAME + "' success deleted.");
+		getOsClient().delete(pod);
+		getOsClient().delete(route);
+		getOsClient().delete(service);
+		System.out.println("Service '" + serviceName + " success deleted.");
 	}
 	
 }

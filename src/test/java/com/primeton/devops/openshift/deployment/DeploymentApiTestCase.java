@@ -12,7 +12,6 @@ import com.openshift.restclient.model.IDeploymentConfig;
 import com.openshift.restclient.model.IService;
 import com.openshift.restclient.model.route.IRoute;
 import com.primeton.devops.openshift.testcase.AbstractTestCase;
-import com.primeton.devops.openshift.util.OpenshiftClient;
 
 /**
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
@@ -32,7 +31,7 @@ public class DeploymentApiTestCase extends AbstractTestCase {
 	 */
 	@Override
 	public void test() {
-		IDeploymentConfig deploymentConfig = OpenshiftClient.getClient().getResourceFactory()
+		IDeploymentConfig deploymentConfig = getOsClient().getResourceFactory()
 				.stub(ResourceKind.DEPLOYMENT_CONFIG, deploymentConfigName, projectName);
 		IContainer container = deploymentConfig.addContainer(containerName);
 		container.setImage(new DockerImageURI("nginx:latest"));
@@ -47,34 +46,34 @@ public class DeploymentApiTestCase extends AbstractTestCase {
 		deploymentConfig.setReplicaSelector("name", labelName);
 		
 		// create pod
-		IDeploymentConfig dc = OpenshiftClient.getClient().create(deploymentConfig);
+		IDeploymentConfig dc = getOsClient().create(deploymentConfig);
 		Assert.assertNotNull(dc);
 		
 		System.out.println("DeploymentConfig '" + deploymentConfigName + "' success created. Will delete after 600 seconds.");
 		
 		// create service
-		IService service = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.SERVICE, serviceName, projectName);
+		IService service = getOsClient().getResourceFactory().stub(ResourceKind.SERVICE, serviceName, projectName);
 		service.setSelector("name", labelName); // bind target pod
 		service.addPort(80, 80); // port : targetPort (container)
-		service = OpenshiftClient.getClient().create(service);
+		service = getOsClient().create(service);
 		Assert.assertNotNull(service);
 		System.out.println(String.format("Create service %s success.", service));
 		
 		// create route
-		IRoute route = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.ROUTE, routeName, projectName);
+		IRoute route = getOsClient().getResourceFactory().stub(ResourceKind.ROUTE, routeName, projectName);
 		route.setHost(domainName);
 		// route.setPath("/");
 		route.setServiceName(serviceName); // binding target service
-		route = OpenshiftClient.getClient().create(route);
+		route = getOsClient().create(route);
 		Assert.assertNotNull(route);
 		System.out.println(String.format("Create route %s for service '%s' success.", route, serviceName));
 		
 		sleep(600);
 		
 		// clean resources
-		OpenshiftClient.getClient().delete(route);
-		OpenshiftClient.getClient().delete(service);
-		OpenshiftClient.getClient().delete(dc);
+		getOsClient().delete(route);
+		getOsClient().delete(service);
+		getOsClient().delete(dc);
 	}
 
 }
