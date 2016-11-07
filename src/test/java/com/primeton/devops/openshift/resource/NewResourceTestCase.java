@@ -10,7 +10,6 @@ import org.apache.commons.io.IOUtils;
 
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.model.IDeploymentConfig;
-import com.openshift.restclient.model.IResource;
 import com.openshift.restclient.model.IService;
 import com.primeton.devops.openshift.testcase.TemplateTestCase;
 
