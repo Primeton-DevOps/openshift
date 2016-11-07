@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.primeton.devops.openshift.resource;
+package com.primeton.devops.openshift.quota;
 
 import java.io.InputStream;
 
