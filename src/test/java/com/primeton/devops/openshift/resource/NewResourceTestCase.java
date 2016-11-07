@@ -10,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.model.IDeploymentConfig;
+import com.openshift.restclient.model.IResource;
 import com.openshift.restclient.model.IService;
 import com.primeton.devops.openshift.testcase.TemplateTestCase;
 
@@ -49,6 +50,11 @@ public class NewResourceTestCase extends TemplateTestCase {
 		
 		config = getOsClient().getResourceFactory().create(json);
 		System.out.println(config);
+		/*
+		IResource resource = getOsClient().getResourceFactory().create(NewResourceTestCase.class.getResourceAsStream("/beta/autoscale.json"));
+		System.out.println(resource.getClass().getName());
+		System.out.println(resource);
+		*/
 	}
 
 }
