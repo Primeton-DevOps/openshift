@@ -37,5 +37,9 @@ public class OpenshiftClient {
 		// client.getAuthorizationContext().setToken(API_TOKEN);
 		return client;
 	}
+	
+	public static IClient getNewClient() {
+		return new ClientBuilder(API_URI).withUserName(API_USER).withPassword(API_PASS).build();
+	}
 
 }

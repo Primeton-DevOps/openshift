@@ -55,5 +55,9 @@ public abstract class AbstractTestCase {
 	protected IClient getOsClient() {
 		return OpenshiftClient.getClient();
 	}
+	
+	protected IClient getNewOsClient() {
+		return OpenshiftClient.getNewClient();
+	}
 
 }
