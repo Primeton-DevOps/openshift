@@ -9,9 +9,11 @@ import java.util.Map;
 
 import org.junit.Assert;
 
+import com.openshift.internal.restclient.model.user.OpenShiftUser;
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.model.IService;
 import com.primeton.devops.openshift.testcase.AbstractTestCase;
+import com.primeton.devops.openshift.util.OpenshiftClient;
 
 /**
  * @author ZhongWen (mailto:lizhongwen1989@gmail.com)
@@ -41,7 +43,6 @@ public class QueryApiTestCase extends /*TemplateTestCase*/ AbstractTestCase {
 //			System.out.println(project);
 //		}
 		// 1) 2) 查询方法执行顺序对调就都正常了
-		// 很奇怪！！！尝试一下别的资源查询
 		
 		// 服务的查询正常
 		IService service1 = getOsClient().getResourceFactory().stub(ResourceKind.SERVICE, serviceName, projectName);
@@ -76,6 +77,17 @@ public class QueryApiTestCase extends /*TemplateTestCase*/ AbstractTestCase {
 		Assert.assertTrue(serviceName.equals(services.get(0).getName()));
 		
 		getOsClient().delete(service1);
+		
+		List<OpenShiftUser> users = OpenshiftClient.getClient().list(ResourceKind.USER, "default");
+		if (null == users || users.isEmpty()) {
+			System.err.println("None users.");
+			return;
+		}
+		System.out.println();
+		for (OpenShiftUser user : users) {
+			System.out.println(user);
+		}
+		
 	}
 
 }
