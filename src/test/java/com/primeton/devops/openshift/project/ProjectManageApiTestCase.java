@@ -27,19 +27,11 @@ public class ProjectManageApiTestCase {
 		final String projectName = "myfirstproject";
 		IResource request = OpenshiftClient.getClient().getResourceFactory().stub(ResourceKind.PROJECT_REQUEST, projectName);
 		IProject project = (IProject)OpenshiftClient.getClient().create(request);
+		System.out.println(String.format("Project '%s' success created.", project));
 
 		Assert.assertNotNull(project);
 		
-		System.out.println(new StringBuffer()
-				.append(project.getCreationTimeStamp()).append(", ")
-				.append(project.getDescription()).append(", ")
-				.append(project.getDisplayName()).append(", ")
-				.append(project.getKind()).append(", ")
-				.append(project.getName()).append(", ")
-				.append(project.getNamespace()).append(", ")
-				.append(project.getResourceVersion()).append(", ")
-				.append(project.getLabels()).append(", ")
-				.toString());
+		System.out.println(project);
 		
 		List<Project> projects = OpenshiftClient.getClient().list(ResourceKind.PROJECT);
 		Assert.assertNotNull(projects);

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Test;
 
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.images.DockerImageURI;
@@ -32,7 +31,6 @@ public class ServiceManageApiTestCase extends AbstractTestCase {
 	private String routeName = serviceName + "-route";
 	private String domainName = serviceName + ".openshift.primeton.com";
 	
-	@Test
 	public void test() {
 		// Create pod with a container
 		IPod pod = getOsClient().getResourceFactory().stub(ResourceKind.POD, podName, projectName);
@@ -59,17 +57,7 @@ public class ServiceManageApiTestCase extends AbstractTestCase {
 		
 		Assert.assertNotNull(service);
 		
-		System.out.println(new StringBuffer()
-				.append(service.getCreationTimeStamp()).append(", ")
-				.append(service.getName()).append(", ")
-				.append(service.getNamespace()).append(",")
-				.append(service.getPort()).append(", ")
-				.append(service.getPortalIP()).append(", ")
-				.append(service.getTargetPort()).append(", ")
-				.append(service.getLabels()).append(", ")
-				.append(service.getPorts()).append(", ")
-				.append(service.getPods()).append(", ")
-				.toString());
+		System.out.println(service);
 		
 		System.out.println("Service '" + serviceName + "' success created. Will delete after 600 seconds.");
 		 

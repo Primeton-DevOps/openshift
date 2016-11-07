@@ -5,6 +5,7 @@ package com.primeton.devops.openshift.quota;
 
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 
 import com.openshift.restclient.ResourceKind;
@@ -93,11 +94,13 @@ public class QuotaApiTestCase extends AbstractTestCase {
 		IResourceQuota quota = getOsClient().create(resourceQuota, projectName);
 		Assert.assertNotNull(quota);
 		
+		System.out.println(quota);
 		System.out.println(String.format("Resource Quota '%s' success created, will delete after 600s.", resourceQuotaName));
 		
 		sleep(600);
 		
 		// clean
+		IOUtils.closeQuietly(in);
 		getOsClient().delete(route);
 		getOsClient().delete(service);
 		getOsClient().delete(dc);
