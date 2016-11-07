@@ -3,12 +3,10 @@
  */
 package com.primeton.devops.openshift.yaml2json;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.yaml.snakeyaml.Yaml;
 
@@ -43,6 +41,8 @@ public class Yaml2JsonTestCase extends TemplateTestCase {
 		String document = "\n- Hesperiidae\n- Papilionidae\n- Apatelodidae\n- Epiplemidae";
 		List<String> list = (List<String>) yaml.load(document);
 		System.out.println(list);
+		
+		// array to json
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -52,18 +52,17 @@ public class Yaml2JsonTestCase extends TemplateTestCase {
 	    Map map = (Map) yaml.load(document);
 	    Assert.assertEquals("{hello=25}", map.toString());
 	    Assert.assertEquals(new Integer(25), map.get("hello"));
+	    
+	    // map to json
 	}
 	
 	@SuppressWarnings("rawtypes")
 	private void test3() {
 	    InputStream input = Yaml.class.getResourceAsStream("/deploy.yaml");
 	    Yaml yaml = new Yaml();
-	    Map data1 = (Map) yaml.load(input);
-	    Assert.assertEquals("DeploymentConfig", data1.get("kind"));
-	    //
-	    Object data2 = yaml.load(new ByteArrayInputStream("test2".getBytes()));
-	    Assert.assertEquals("test2", data2);
-	    IOUtils.closeQuietly(input);
+	    Map map = (Map) yaml.load(input);
+	    Assert.assertEquals("DeploymentConfig", map.get("kind"));
+	    // map to json
 	}
 
 }
