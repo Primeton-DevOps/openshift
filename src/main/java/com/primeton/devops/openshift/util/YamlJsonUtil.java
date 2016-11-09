@@ -39,7 +39,7 @@ public class YamlJsonUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return null == obj ? null : new Yaml().dump(obj);
+		return null == obj ? null : new Yaml().dumpAsMap(obj);
 	}
 	
 	/**
