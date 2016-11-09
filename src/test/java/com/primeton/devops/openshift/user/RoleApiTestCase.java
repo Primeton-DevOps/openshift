@@ -9,6 +9,7 @@ import org.junit.Assert;
 
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.model.authorization.IRole;
+import com.openshift.restclient.model.user.IUser;
 import com.primeton.devops.openshift.testcase.AbstractTestCase;
 
 /**
@@ -18,6 +19,7 @@ import com.primeton.devops.openshift.testcase.AbstractTestCase;
 public class RoleApiTestCase extends AbstractTestCase {
 	
 	private String roleName = "role-" + uid;
+	private String userName = "user-" + uid;
 
 	/* (non-Javadoc)
 	 * @see com.primeton.devops.openshift.testcase.AbstractTestCase#test()
@@ -47,7 +49,22 @@ public class RoleApiTestCase extends AbstractTestCase {
 		Assert.assertNotNull(role);
 		System.out.println(role);
 		
+		IUser user = getOsClient().getResourceFactory().stub(ResourceKind.USER, userName);
+		user = getOsClient().create(user);
+		System.out.println(user);
+		
+		List<IUser> users = getOsClient().list(ResourceKind.USER);
+		if (null == users || users.isEmpty()) {
+			System.err.println("No user exists.");
+		} else {
+			for (IUser u : users) {
+				System.out.println(u);
+			}
+		}
+		
 		sleep(30);
+		
+		getOsClient().delete(user);
 	}
 
 }
