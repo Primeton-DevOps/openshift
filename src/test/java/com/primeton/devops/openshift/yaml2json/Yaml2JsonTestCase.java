@@ -86,5 +86,19 @@ public class Yaml2JsonTestCase extends TemplateTestCase {
 		System.out.println("############");
 		IOUtils.closeQuietly(input);
 	}
+	
+	@Test
+	public void test6() throws Exception {
+		System.out.println("############");
+		System.out.println(YamlJsonUtil.yaml2json(Yaml2JsonTestCase.class.getResourceAsStream("/deploy.yaml")));
+		System.out.println("############");
+	}
+	
+	@Test
+	public void test7() throws Exception {
+		System.out.println("############");
+		System.out.println(YamlJsonUtil.json2yaml(Yaml2JsonTestCase.class.getResourceAsStream("/deploy.json")));
+		System.out.println("############");
+	}
 
 }
